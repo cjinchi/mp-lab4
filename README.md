@@ -1,14 +1,5 @@
 # 大数据处理实验3
 
-## 运行
-假设已经将数据文件放在HDFS中的`/test-in`文件夹内，执行以下命令：
-
-`bin/hadoop jar mp-lab3.jar app.InvertedIndex /test-in /test-out`
-
-其中：
-- `mp-lar3.jar` 为生成的jar文件
-- `/test-in` 为HDFS中数据所在文件夹的路径
-
 ## TODO
 
 ### 必做部分
@@ -36,3 +27,11 @@
 
 - ...
 
+## 运行
+假设已经将数据文件放在HDFS中的`/test-in`文件夹内，执行以下命令：
+
+`bin/hadoop jar mp-lab3.jar app.InvertedIndex /test-in /test-out`
+
+其中：
+- `mp-lar3.jar` 为生成的jar文件
+- `/test-in` 为HDFS中数据所在文件夹的路径
