@@ -51,6 +51,8 @@ public class InvertedIndex {
          * currentPostings表示currentTerm的索引，当currentTerm变化时需要清空。
          */
         private String currentTerm = null;
+        private long currentTermTotalCount = 0;
+        private long currentTermTotalFileCount = 0;
 
         private List<String> postings = new ArrayList<>();
 
@@ -63,16 +65,20 @@ public class InvertedIndex {
             for (IntWritable value : values) {
                 sum += value.get();
             }
+            currentTermTotalCount += sum;
+            currentTermTotalFileCount ++;
 
             if (currentTerm == null || !currentTerm.equals(term)) {
                 //输出旧term的信息
                 writeCurrentTerm(context);
                 postings.clear();
+                currentTermTotalCount = 0;
+                currentTermTotalFileCount = 0;
                 //开始一个新term的处理
                 currentTerm = term;
             }
 
-            postings.add(String.format("<%s,%d>", fileName, sum));
+            postings.add(String.format("%s:%d", fileName, sum));
         }
 
         @Override
@@ -87,11 +93,15 @@ public class InvertedIndex {
             }
 
             StringBuilder postingsBuilder = new StringBuilder();
+            postingsBuilder.append(currentTermTotalCount/currentTermTotalFileCount);
+            postingsBuilder.append(",");
+            int prefixLength = postingsBuilder.length();
+
             for (String posting : postings) {
                 postingsBuilder.append(posting);
                 postingsBuilder.append(';');
             }
-            if (postingsBuilder.length() > 0) {
+            if (postingsBuilder.length() > prefixLength) {
                 //删去最后一个分号
                 postingsBuilder.deleteCharAt(postingsBuilder.length() - 1);
             }
