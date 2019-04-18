@@ -19,9 +19,9 @@
 
 ### 拓展部分
 
-- 词干提取（第五章PPT第66页的第1点，考虑用[Lucene的PorterStemmer](https://lucene.apache.org/core/7_6_0/analyzers-common/org/tartarus/snowball/ext/PorterStemmer.html)实现）
+- ~~词干提取（第五章PPT第66页的第1点，考虑用[Lucene的PorterStemmer](https://lucene.apache.org/core/7_6_0/analyzers-common/org/tartarus/snowball/ext/PorterStemmer.html)实现）~~【发现实验数据是中文的，所以词干提取没有意义】
 
-- 去stopwords（第五章PPT第66页的第2点，课本里也有提及，考虑用课本的方法或者[Lucene的StopFilter](http://lucene.apache.org/core/7_6_0/core/org/apache/lucene/analysis/StopFilter.html)实现）
+- ~~去stopwords（第五章PPT第66页的第2点，课本里也有提及，考虑用课本的方法或者[Lucene的StopFilter](http://lucene.apache.org/core/7_6_0/core/org/apache/lucene/analysis/StopFilter.html)实现）~~【同上】
 
 - 【来自实验要求PDF】使用另外一个MapReduce Job对每个词语的平均出现次数进行全局排序，输出排序后的结果。
 
