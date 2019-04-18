@@ -23,9 +23,9 @@
 
 - ~~去stopwords（第五章PPT第66页的第2点，课本里也有提及，考虑用课本的方法或者[Lucene的StopFilter](http://lucene.apache.org/core/7_6_0/core/org/apache/lucene/analysis/StopFilter.html)实现）~~【同上】
 
-- 【来自实验要求PDF】使用另外一个MapReduce Job对每个词语的平均出现次数进行全局排序，输出排序后的结果。
+- ~~【来自实验要求PDF】使用另外一个MapReduce Job对每个词语的平均出现次数进行全局排序，输出排序后的结果。~~
 
-- 【来自实验要求PDF】为每位作家、计算个词语的 TF-IDF。
+- 【来自实验要求PDF】为每位作家、计算每个词语的 TF-IDF。
 
 ## 运行
 假设已经将数据文件放在HDFS中的`/test-in`文件夹内，执行以下命令：

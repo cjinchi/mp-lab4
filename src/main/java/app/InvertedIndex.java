@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
+import util.FileNameUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class InvertedIndex {
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             // 获取当前内容所在文件的文件名
-            String fileName = ((FileSplit) context.getInputSplit()).getPath().getName();
+            String fileName = FileNameUtil.getPrefix(((FileSplit) context.getInputSplit()).getPath().getName());
 
             //分词，并将每个词记录为 <term#fileName,count>
             StringTokenizer itr = new StringTokenizer(value.toString().toLowerCase());
