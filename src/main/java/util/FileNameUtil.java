@@ -2,11 +2,7 @@ package util;
 
 public class FileNameUtil {
     public static String getPrefix(String fileName) {
-        if (fileName.endsWith(".txt.segmented")){
-            return fileName.substring(0,fileName.length()-14);
-        }else{
-            return fileName;
-        }
+        return fileName.substring(0,fileName.length()-14);
     }
 
     public static void main(String[] args) {

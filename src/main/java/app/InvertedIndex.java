@@ -52,8 +52,8 @@ public class InvertedIndex {
          * currentPostings表示currentTerm的索引，当currentTerm变化时需要清空。
          */
         private String currentTerm = null;
-        private long currentTermTotalCount = 0;
-        private long currentTermTotalFileCount = 0;
+        private int currentTermTotalCount = 0;
+        private int currentTermTotalFileCount = 0;
 
         private List<String> postings = new ArrayList<>();
 
@@ -94,7 +94,7 @@ public class InvertedIndex {
             }
 
             StringBuilder postingsBuilder = new StringBuilder();
-            postingsBuilder.append(currentTermTotalCount/currentTermTotalFileCount);
+            postingsBuilder.append(currentTermTotalCount/(double)currentTermTotalFileCount);
             postingsBuilder.append(",");
             int prefixLength = postingsBuilder.length();
 
