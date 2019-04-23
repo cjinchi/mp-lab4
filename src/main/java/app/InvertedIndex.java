@@ -62,12 +62,6 @@ public class InvertedIndex {
             String[] items = key.toString().split(" ");
             String term = items[0];
             String fileName = items[1];
-            int sum = 0;
-            for (IntWritable value : values) {
-                sum += value.get();
-            }
-            currentTermTotalCount += sum;
-            currentTermTotalFileCount ++;
 
             if (currentTerm == null || !currentTerm.equals(term)) {
                 //输出旧term的信息
@@ -78,6 +72,13 @@ public class InvertedIndex {
                 //开始一个新term的处理
                 currentTerm = term;
             }
+
+            int sum = 0;
+            for (IntWritable value : values) {
+                sum += value.get();
+            }
+            currentTermTotalCount += sum;
+            currentTermTotalFileCount ++;
 
             postings.add(String.format("%s:%d", fileName, sum));
         }

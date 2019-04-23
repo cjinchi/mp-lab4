@@ -10,23 +10,29 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TFIDF {
 
-    public static class TFIDFMapper extends Mapper<Object, Text, Text, DoubleWritable> {
+    public static class TFIDFMapper extends Mapper<Object, Text, Text, Text> {
 
         private static final String[] NAMES = {"金庸", "梁羽生", "李凉", "古龙", "卧龙生"};
-        private static final int[] TOTAL_BOOKS_NUM = {15, 38, 41, 70, 54};
+        //        private static final int[] TOTAL_BOOKS_NUM = {15, 38, 41, 70, 54};
+        private static final int TOTAL_BOOKS_NUM = 218;
 
         private Text authorAndTerm = new Text();
+        private Text tfIdf = new Text();
 
         private int[] tfs = new int[5];
-        private int[] booksNum = new int[5];
+        //        private int[] booksNum = new int[5];
+        Set<String> books = new HashSet<>();
 
         private void reset() {
             for (int i = 0; i < 5; i++) {
                 tfs[i] = 0;
-                booksNum[i] = 0;
+//                booksNum[i] = 0;
+                books.clear();
             }
         }
 
@@ -41,6 +47,8 @@ public class TFIDF {
                 String[] bookOrTimes = oneBookAndTimes.split(":");
                 String bookTitle = bookOrTimes[0];
                 int times = Integer.valueOf(bookOrTimes[1]);
+
+                books.add(bookTitle);
 
                 int index;
                 if (bookTitle.startsWith("金庸")) {
@@ -57,14 +65,15 @@ public class TFIDF {
                     throw new RuntimeException();
                 }
                 tfs[index] += times;
-                booksNum[index]++;
+//                booksNum[index]++;
             }
 
             for (int i = 0; i < 5; i++) {
-                double tfIdf = tfs[i] * Math.log(((double) TOTAL_BOOKS_NUM[i]) / (1 + booksNum[i]));
+//                double tfIdf = tfs[i] * Math.log(((double) TOTAL_BOOKS_NUM) / (1 + books.size()));
 
                 authorAndTerm.set(String.format("%s,%s", NAMES[i], term));
-                context.write(authorAndTerm, new DoubleWritable(tfIdf));
+                tfIdf.set(String.format("%d-%f", tfs[i], Math.log(((double) TOTAL_BOOKS_NUM) / (1 + books.size()))));
+                context.write(authorAndTerm, tfIdf);
             }
         }
     }
@@ -76,9 +85,9 @@ public class TFIDF {
         job.setJarByClass(TFIDF.class);
         job.setMapperClass(TFIDF.TFIDFMapper.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(DoubleWritable.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(DoubleWritable.class);
+        job.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
