@@ -32,7 +32,7 @@ public class InvertedIndex {
             String fileName = FileNameUtil.getPrefix(((FileSplit) context.getInputSplit()).getPath().getName());
 
             //分词，并将每个词记录为 <term#fileName,count>
-            StringTokenizer itr = new StringTokenizer(value.toString().toLowerCase());
+            StringTokenizer itr = new StringTokenizer(value.toString());
             while (itr.hasMoreTokens()) {
                 //教材中是用'#'作为分隔符，但term或filename内部可能会出现'#'字符，所以改用空格
                 termAndFileName.set(String.format("%s %s", itr.nextToken(), fileName));

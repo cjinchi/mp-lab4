@@ -70,9 +70,8 @@ public class TFIDF {
 
             for (int i = 0; i < 5; i++) {
 //                double tfIdf = tfs[i] * Math.log(((double) TOTAL_BOOKS_NUM) / (1 + books.size()));
-
                 authorAndTerm.set(String.format("%s,%s", NAMES[i], term));
-                tfIdf.set(String.format("%d-%f", tfs[i], Math.log(((double) TOTAL_BOOKS_NUM) / (1 + books.size()))));
+                tfIdf.set(String.format("%d-%f", tfs[i], Math.log10(((double) TOTAL_BOOKS_NUM) / (1 + books.size()))));
                 context.write(authorAndTerm, tfIdf);
             }
         }
