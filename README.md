@@ -1,37 +1,35 @@
-# 大数据处理实验3
+# 大数据处理实验4
+
+## 实验要求
+
+以cslabcms为准（包含推荐的HBase和Hive版本）。
+
+
 
 ## TODO
 
-### 必做部分
+//以下各部分有 先后关系
 
-- ~~实验要求中的“平均出现次数”~~
+### 基础部分
 
-- 【实验报告】实验设计说明
-    1. 主要设计思路
-    2. 算法设计
-    3. 程序和各个类设计说明 
+- 安装和运行HBase(推荐1.4.9)和Hive(推荐2.3.4)的流程简介及截图。
 
-- 【实验报告】程序运行和实验结果说明和分析
-    1.程序运行和实验结果说明
-    2.分析
+  
 
-- 【实验报告】性能、扩展性等方面可能存在的不足和可能的改进之处 
+### HBase部分
 
-### 拓展部分
+- 改第3次实验的MapReduce程序，在Reduce阶段将倒排索引的信息通过文件输出， 而每个词语及其对应的“平均出现次数”信息写入到HBase的表“Wuxia”中（Wuxia表提前在本地安装的HBase中创建）
 
-- ~~词干提取（第五章PPT第66页的第1点，考虑用[Lucene的PorterStemmer](https://lucene.apache.org/core/7_6_0/analyzers-common/org/tartarus/snowball/ext/PorterStemmer.html)实现）~~【发现实验数据是中文的，所以词干提取没有意义】
+- 编写Java程序，遍历上一步中保存在HBase中的表，并把表格的内容(词语以及平 均出现次数)保存到本地文件中
 
-- ~~去stopwords（第五章PPT第66页的第2点，课本里也有提及，考虑用课本的方法或者[Lucene的StopFilter](http://lucene.apache.org/core/7_6_0/core/org/apache/lucene/analysis/StopFilter.html)实现）~~【同上】
+  
 
-- ~~【来自实验要求PDF】使用另外一个MapReduce Job对每个词语的平均出现次数进行全局排序，输出排序后的结果。~~
+### Hive部分
 
-- ~~【来自实验要求PDF】为每位作家、计算每个词语的 TF-IDF。~~
+- Hive安装完成后，在Hive Shell命令行操作创建表(表名:Wuxia(word STRING, count DOUBLE))、导入平均出现次数的数据、查询(出现次数大于300的词语)和 前100个出现次数最多的词
 
-## 运行
-假设已经将数据文件放在HDFS中的`/test-in`文件夹内，执行以下命令：
 
-`bin/hadoop jar mp-lab3.jar app.InvertedIndex /test-in /test-out`
 
-其中：
-- `mp-lar3.jar` 为生成的jar文件
-- `/test-in` 为HDFS中数据所在文件夹的路径
+### 其他
+
+- 实验体会
