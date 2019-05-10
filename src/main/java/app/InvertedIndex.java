@@ -18,6 +18,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 import util.FileNameUtil;
+import util.HBaseController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,30 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class InvertedIndex {
-    private static final String TABLE_NAME = "wuxia";
-    private static final String COLUMN_FAMILY_NAME = "count_family";
-    private static final byte[] COLUMN_FAMILY_BYTES = Bytes.toBytes(COLUMN_FAMILY_NAME);
-    private static final byte[] COLUMN_BYTES = Bytes.toBytes("average_count");
-    //lab4: HBase connection
-    private static Connection connection;
-    private static Table table;
 
-    static {
-        try {
-            connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
-            Admin admin = connection.getAdmin();
-            HTableDescriptor descriptor = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
-            descriptor.addFamily(new HColumnDescriptor(COLUMN_FAMILY_NAME));
-            admin.createTable(descriptor);
-
-            table = connection.getTable(TableName.valueOf(TABLE_NAME));
-            if (table == null) {
-                throw new NullPointerException();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable> {
 
@@ -143,9 +121,7 @@ public class InvertedIndex {
             str2.set(postingsBuilder.toString());
             context.write(str1, str2);
 
-            Put put = new Put(Bytes.toBytes(currentTerm));
-            put.addColumn(COLUMN_FAMILY_BYTES, COLUMN_BYTES, Bytes.toBytes(currentTermTotalCount/(double)currentTermTotalFileCount));
-            table.put(put);
+            HBaseController.addAverageCount(currentTerm,currentTermTotalCount/(double)currentTermTotalFileCount);
         }
 
     }
