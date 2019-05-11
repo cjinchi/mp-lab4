@@ -11,7 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class HBaseController {
-    private static final String TABLE_NAME = "wuxia1";
+    private static final String TABLE_NAME = "wuxia";
     private static final String COLUMN_FAMILY_NAME = "count_family";
     private static final byte[] COLUMN_FAMILY_BYTES = Bytes.toBytes(COLUMN_FAMILY_NAME);
     private static final byte[] COLUMN_BYTES = Bytes.toBytes("average_count");
@@ -31,11 +31,13 @@ public class HBaseController {
         connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
 
         Admin admin = connection.getAdmin();
-        if (!admin.tableExists(TableName.valueOf(TABLE_NAME))){
-            HTableDescriptor descriptor = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
-            descriptor.addFamily(new HColumnDescriptor(COLUMN_FAMILY_NAME));
-            admin.createTable(descriptor);
-        }
+        //在实际运行中，以下代码会导致程序不同步，报出“建表时表已存在”的异常
+        //因此，提前在HBase shell建好表，删去以下代码
+//        if (!admin.tableExists(TableName.valueOf(TABLE_NAME))){
+//            HTableDescriptor descriptor = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
+//            descriptor.addFamily(new HColumnDescriptor(COLUMN_FAMILY_NAME));
+//            admin.createTable(descriptor);
+//        }
 
         table = connection.getTable(TableName.valueOf(TABLE_NAME));
     }
@@ -68,13 +70,9 @@ public class HBaseController {
         try {
             for (Result r = scanner.next(); r != null; r = scanner.next()){
                 String key = Bytes.toString(r.getRow());
-                String value = Bytes.toString(r.getValue(COLUMN_FAMILY_BYTES,COLUMN_BYTES));
-                System.out.println(key);
-                System.out.println(value);
-                break;
-//
-//                String result = String.format("%s\t%s\n",key,value);
-//                writer.write(result);
+                Double value = Bytes.toDouble(r.getValue(COLUMN_FAMILY_BYTES,COLUMN_BYTES));
+                String result = String.format("%s %f\n",key,value);
+                writer.write(result);
             }
         }finally {
             scanner.close();
