@@ -21,39 +21,60 @@ public class HBaseController {
 
     static {
         try {
-            connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
-
-            Admin admin = connection.getAdmin();
-            if (!admin.tableExists(TableName.valueOf(TABLE_NAME))){
-                HTableDescriptor descriptor = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
-                descriptor.addFamily(new HColumnDescriptor(COLUMN_FAMILY_NAME));
-                admin.createTable(descriptor);
-            }
-
-            table = connection.getTable(TableName.valueOf(TABLE_NAME));
+            connect();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private static void connect() throws IOException {
+        connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
+
+        Admin admin = connection.getAdmin();
+        if (!admin.tableExists(TableName.valueOf(TABLE_NAME))){
+            HTableDescriptor descriptor = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
+            descriptor.addFamily(new HColumnDescriptor(COLUMN_FAMILY_NAME));
+            admin.createTable(descriptor);
+        }
+
+        table = connection.getTable(TableName.valueOf(TABLE_NAME));
+    }
+
     public static void addAverageCount(String term,double averageCount) throws IOException {
         Put put = new Put(Bytes.toBytes(term));
         put.addColumn(COLUMN_FAMILY_BYTES, COLUMN_BYTES, Bytes.toBytes(averageCount));
-        table.put(put);
+
+        try {
+            table.put(put);
+        } catch (Exception e) {
+            connect();
+            table.put(put);
+        }
     }
 
     public static void saveToLocalFile(String filename) throws IOException {
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8));
 
         Scan scan = new Scan();
-        ResultScanner scanner = table.getScanner(scan);
+        ResultScanner scanner;
+
+        try {
+            scanner = table.getScanner(scan);
+        } catch (IOException e) {
+            connect();
+            scanner = table.getScanner(scan);
+        }
+
         try {
             for (Result r = scanner.next(); r != null; r = scanner.next()){
                 String key = Bytes.toString(r.getRow());
                 String value = Bytes.toString(r.getValue(COLUMN_FAMILY_BYTES,COLUMN_BYTES));
-
-                String result = String.format("%s\t%s\n",key,value);
-                writer.write(result);
+                System.out.println(key);
+                System.out.println(value);
+                break;
+//
+//                String result = String.format("%s\t%s\n",key,value);
+//                writer.write(result);
             }
         }finally {
             scanner.close();

@@ -15,21 +15,20 @@ public class Test {
         Configuration config = HBaseConfiguration.create();
         Connection connection = ConnectionFactory.createConnection(config);
 
-        Table table = connection.getTable(TableName.valueOf("t"));
+        Table table = connection.getTable(TableName.valueOf("t1"));
 
-//        Admin admin = connection.getAdmin();
-//        HTableDescriptor descriptor = new HTableDescriptor(TableName.valueOf("wuxia"));
-//        descriptor.addFamily(new HColumnDescriptor("count_family"));
-//        admin.createTable(descriptor);
+        Scan scan = new Scan();
+//        scan.addColumn(Bytes.toBytes("cf"),Bytes.toBytes("a"));
+        ResultScanner scanner = table.getScanner(scan);
 
-//        Get get = new Get(Bytes.toBytes("row1"));
-//        Result result = table.get(get);
-//        System.out.println(Bytes.toString(result.getValue(Bytes.toBytes("cf"),Bytes.toBytes("a"))));
-
-//        Put put = new Put(Bytes.toBytes("row2"));
-//        put.addColumn(Bytes.toBytes("cf"),Bytes.toBytes("a"), Bytes.toBytes("val from java"));
-//        table.put(put);
-//        System.out.println("put finish");
+        try {
+            for (Result r = scanner.next(); r != null; r = scanner.next()){
+                System.out.println(Bytes.toString(r.getRow()));
+                System.out.println(Bytes.toString(r.getValue(Bytes.toBytes("cf"),Bytes.toBytes("a"))));
+            }
+        }finally {
+            scanner.close();
+        }
 
 
     }

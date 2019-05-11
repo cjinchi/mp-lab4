@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public class HBaseToLocalFile {
     public static void main(String[] args) throws IOException {
-        HBaseController.saveToLocalFile("average_count.txt");
+        HBaseController.saveToLocalFile("average_count.csv");
     }
 }
